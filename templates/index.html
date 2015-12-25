@@ -1,1 +1,50 @@
-Todo
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>Alttext Links</title>
+  <meta name="description" content="Links mostly">
+  <meta name="author" content="Skuzzzy">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+  <link rel="stylesheet" href="css/styles.css">
+
+  <!--[if lt IE 9]>
+  <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+</head>
+
+<body>
+
+    <div>
+	<div id="links">
+	    Test
+	    <br>
+	    Test2
+	</div>
+    </div>
+
+    <script type="text/javascript">
+	$.ajax({url: "all", success: function(result){
+	    result = JSON.parse(result)
+	    result.forEach(function(obj) { console.log(obj.id); });
+	    /*
+	    jQuery.each(result, function(i, val) {
+		$("#links").append( document.createTextNode( " - " + val ) );
+	    });
+	    */
+	    document.getElementById("links").innerHTML = "Test";
+	    /*
+	    $("#links").map(function() {
+		return {
+		    classname: 'item',
+		    content: $(this).text()
+		};
+	    }).get();
+	    */
+	}});
+    </script>
+</body>
+</html>
