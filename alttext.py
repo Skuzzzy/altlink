@@ -1,6 +1,7 @@
 from flask import Flask, request
 from flask.ext.sqlalchemy import SQLAlchemy
 from datetime import datetime
+import json
 
 # Init
 app = Flask(__name__)
@@ -25,6 +26,12 @@ class Link(db.Model):
         self.link = link
         self.title = title
 
+    def to_dict(self):
+        return {"id": self.id, "title": self.title,
+                "created_at": str(self.created_at),
+                "tags": [tag.name for tag in self.tags]}
+
+
 class Tag(db.Model):
     __tablename__ = "tag"
     id   = db.Column(db.Integer, primary_key=True)
@@ -33,6 +40,12 @@ class Tag(db.Model):
     def __init__(self, name):
         self.name = name
 
+def dict_contains(dictionary, *pargs):
+    for each in pargs:
+        if not each in dictionary:
+            return False
+    return True
+
 
 @app.route('/')
 def index():
@@ -40,12 +53,20 @@ def index():
 
 @app.route('/all', methods=['GET'])
 def all_links():
-    return 'Todo', 200
+    all_links = Link.query.all()
+    return json.dumps([link.to_dict() for link in all_links], sort_keys=True, indent=4), 200
 
 @app.route('/add', methods=['POST'])
 def add_link():
     print request.json
-    return 'Todo', 200
+    if not dict_contains(request.json, "link", "title"):
+        return 'Invalid JSON Doc', 400
+
+    new_link = Link(request.json.get("link"), request.json.get("title"))
+    db.session.add(new_link)
+    db.session.commit()
+
+    return 'Created link id:{0}'.format(new_link.id), 200
 
 @app.route('/remove/<int:id>', methods=['POST'])
 def remove_link(id):
@@ -53,4 +74,4 @@ def remove_link(id):
     return 'Todo', 200
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
