@@ -20,29 +20,24 @@
 
     <div>
 	<div id="links">
-	    Test
-	    <br>
-	    Test2
 	</div>
     </div>
 
     <script type="text/javascript">
 	$.ajax({url: "all", success: function(result){
 	    result = JSON.parse(result)
-	    result.forEach(function(obj) { console.log(obj.id); });
+	    $("#links").empty();
+	    result.forEach(function(obj) {
+	       	console.log(obj.id);
+		var div = document.createElement("div");
+		var node = document.createTextNode(obj.link + "\n" + obj.title, + "\n" + obj.tags);
+		div.appendChild(node);
+		$("#links").append(div);
+	    });
 	    /*
 	    jQuery.each(result, function(i, val) {
 		$("#links").append( document.createTextNode( " - " + val ) );
 	    });
-	    */
-	    document.getElementById("links").innerHTML = "Test";
-	    /*
-	    $("#links").map(function() {
-		return {
-		    classname: 'item',
-		    content: $(this).text()
-		};
-	    }).get();
 	    */
 	}});
     </script>
