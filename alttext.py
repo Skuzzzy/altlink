@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, redirect, url_for
 from flask.ext.sqlalchemy import SQLAlchemy
 from datetime import datetime
 import json
@@ -61,13 +61,13 @@ def all_links():
 
 @app.route('/add', methods=['POST'])
 def add_link():
-    print request.json
     if not dict_contains(request.json, "link", "title"):
         return 'Invalid JSON Doc', 400
     new_link = Link(request.json.get("link"), request.json.get("title"))
     db.session.add(new_link)
     db.session.commit()
-    return 'Created link id:{0}'.format(new_link.id), 200
+    return redirect(url_for('all_links'))
+    # return 'Created link id:{0}'.format(new_link.id), 200
 
 @app.route('/del/<int:link_id>', methods=['POST'])
 def remove_link(link_id):

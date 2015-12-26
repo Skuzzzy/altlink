@@ -19,27 +19,49 @@
 <body>
 
     <div>
+	<form id="add">
+	  Link: <input type="text" name="link" id="form_link" autocomplete="off"><br>
+	  Title: <input type="text" name="title" id="form_title" autocomplete="off"><br>
+	  <input onclick="submit_form()" type="button" value="Submit">
+	</form>
 	<div id="links">
 	</div>
     </div>
 
     <script type="text/javascript">
-	$.ajax({url: "all", success: function(result){
-	    result = JSON.parse(result)
-	    $("#links").empty();
-	    result.forEach(function(obj) {
-	       	console.log(obj.id);
-		var div = document.createElement("div");
-		var node = document.createTextNode(obj.link + "\n" + obj.title, + "\n" + obj.tags);
-		div.appendChild(node);
-		$("#links").append(div);
-	    });
-	    /*
-	    jQuery.each(result, function(i, val) {
-		$("#links").append( document.createTextNode( " - " + val ) );
-	    });
-	    */
-	}});
+	function pull_links(){
+	    $.ajax({url: "all", success: function(result){
+		result = JSON.parse(result)
+		$("#links").empty();
+		result.forEach(function(obj) {
+
+		    var div = document.createElement("div");
+		    var a = document.createElement('a');
+		    var linkText = document.createTextNode(obj.title);
+		    a.appendChild(linkText);
+		    a.title = obj.title;
+		    a.href = obj.link;
+		    div.appendChild(a);
+
+		    $("#links").append(div);
+		});
+	    }});
+	}
+
+	pull_links(); // Load the page as it should be
+
+	function submit_form(){
+	    $.ajax({
+	      type: "POST",
+	      url: "add",
+	      data: JSON.stringify({title: $('#form_title').val(), link: $('#form_link').val()}),
+	      success: function(){},
+	      dataType: "json",
+	      contentType : "application/json"
+	      });
+	    pull_links();
+	    return false;
+	}
     </script>
 </body>
 </html>
